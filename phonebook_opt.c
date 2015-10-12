@@ -8,7 +8,7 @@ int hash(char lastname[])
     int value = 0, cnt = 0;
     for (char *c=lastname; *c; c++)
         value += *c << cnt;
-    return value;
+    return value % HASH_SIZE;
 }
 
 entry *findName(char lastname[], entry *pHead)
