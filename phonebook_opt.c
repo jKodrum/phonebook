@@ -3,23 +3,32 @@
 
 #include "phonebook_opt.h"
 
+int hash(char lastname[])
+{
+    int value = 0, cnt = 0;
+    for (char *c=lastname; *c; c++)
+        value += *c << cnt;
+    return value;
+}
+
 entry *findName(char lastname[], entry *pHead)
 {
-    while (pHead != NULL) {
+    int hashValue = hash(lastname);
+    for (pHead=bucket[hashValue]; pHead; pHead=pHead->pNext)
         if (strcasecmp(lastname, pHead->lastName) == 0)
             return pHead;
-        pHead = pHead->pNext;
-    }
     return NULL;
 }
 
 entry *append(char lastName[], entry *e)
 {
-    e->pNext = (entry *) malloc(sizeof(entry));
-    e = e->pNext;
-    e->info = (content *)malloc(sizeof(content));
-    strcpy(e->lastName, lastName);
-    e->pNext = NULL;
-
-    return e;
+    int hashValue = hash(lastName);
+    entry *newNode = (entry *) malloc(sizeof(entry));
+    strcpy(newNode->lastName, lastName);
+    newNode->pNext = NULL;
+    if (bucket[hashValue] == NULL)
+        bucket[hashValue] = newNode;
+    else
+        bucket[hashValue]->pNext = newNode;
+    return newNode;
 }
